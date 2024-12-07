@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function ChallengeCard({ challenge }: { challenge: any }) {
-    console.log("Challenge:", challenge);
+  console.log("Challenge:", challenge);
+
   return (
     <div className="my-2">
       <div
-        onClick={() => (window.location.href = `/challenge/${challenge.id}`)} 
+        onClick={() => (window.location.href = `/challenge/${challenge.id}`)}
         className="relative cursor-pointer  bg-[#282828] shadow-xl w-full h-full rounded-lg pb-5 px-5"
       >
         <div>
