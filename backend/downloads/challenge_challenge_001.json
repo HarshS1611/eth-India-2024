@@ -1,0 +1,8 @@
+{
+  "category": "Test file",
+  "challengeName": "1000 Steps",
+  "target": 10000,
+  "targetType": "steps",
+  "id": "challenge-001",
+  "amount": 500
+}
