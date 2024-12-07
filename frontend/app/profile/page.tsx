@@ -31,33 +31,36 @@ export default function Profile() {
                             <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
                     </div>
-                    <div className="flex my-3 text-lg justify-center">
-                        Wallet Address:{" "}
+                    <div className="flex my-3 text-lg mt-5 justify-start pl-20">
+                        Wallet Address: 0x4de...2323
                     </div>
-                    <div className="flex my-3 justify-center">
+                    <div className="flex my-3 justify-start pl-20">
                         Username: HarshS16
                     </div>
-                    <div className="flex my-3 justify-center">
+                    <div className="flex my-3 justify-start pl-20">
                         Token Balance: 250
                     </div>
                     <div className="flex gap-5 my-10 px-4">
-                        <a
-                            href={"/"}
-                            className="relative bg-[#282828] border-2 border-[#3E3E3E] w-full h-full   rounded-lg"
-                        >
-                            <div className="flex w-full py-6 text-lg font-thunder tracking-widest font-bold text-white items-center justify-center gap-5">
-                                Challenges Joined
-                            </div>
-                        </a>
-                        <a
-                            href={"/"}
-                            className="relative bg-[#282828] border-2 border-[#3E3E3E] w-full h-full   rounded-lg"
-                        >
-                            <div className="flex w-full py-6 text-lg font-thunder tracking-widest font-bold text-white items-center justify-center gap-5">
-                                Challenges Hosted
-                            </div>
-                        </a>
+                <a
+                    href={"/"}
+                    className="relative flex justify-center bg-[#373737] py-4 blur-[50]] w-full h-full rounded-xl shadow-2xl"
+                >
+                    <div className="flex flex-col w-full  text-lg font-thunder tracking-widest font-bold text-white items-center justify-center">
+                        <img className="w-10 h-10" src="/images/stats.png" />
+                       <p className="text-center mt-2 text-lg"> Challenges Joined</p>
                     </div>
+                </a>
+                <a
+                    href={"/"}
+                    className="relative bg-[#373737] py-4 blur-[50]] w-full h-full rounded-xl shadow-2xl"
+                >
+                   <div className="flex flex-col w-full  text-lg font-thunder tracking-widest font-bold text-white items-center justify-center">
+                        <img className="w-10 h-10" src="/images/host.png" />
+                       <p className="text-center mt-2 text-lg"> Challenges Hosted</p>
+                    </div>
+                </a>
+            </div>
+
                     <div className="flex flex-col gap-2 my-10 px-4">
                         <p className="text-2xl font-bold">General Settings</p>
                         <div>
