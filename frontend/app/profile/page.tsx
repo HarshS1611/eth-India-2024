@@ -34,12 +34,6 @@ export default function Profile() {
                     <div className="flex my-3 text-lg mt-5 justify-start pl-20">
                         Wallet Address: 0x4de...2323
                     </div>
-                    <div className="flex my-3 justify-start pl-20">
-                        Username: HarshS16
-                    </div>
-                    <div className="flex my-3 justify-start pl-20">
-                        Token Balance: 250
-                    </div>
                     <div className="flex gap-5 my-10 px-4">
                 <a
                     href={"/"}

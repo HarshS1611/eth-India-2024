@@ -5,7 +5,7 @@ import {
     Avatar,
     EthBalance,
     Identity,
-    Name,
+    Name
   } from '@coinbase/onchainkit/identity';
   import {
     ConnectWallet,
@@ -33,8 +33,8 @@ export default function Navbar() {
         <WalletDropdown>
           <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
             <Avatar />
-            <Name address="0xB14a7659486Af4ad46c598b404c259E895Da41e2"/>
-            <Address address="0xB14a7659486Af4ad46c598b404c259E895Da41e2" className={color.foregroundMuted} />
+            <Name/>
+            <Address className={color.foregroundMuted} />
           </Identity>
           <WalletDropdownDisconnect />
         </WalletDropdown>
