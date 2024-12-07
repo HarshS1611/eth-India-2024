@@ -2,7 +2,7 @@ const axios = require("axios");
 const FormData = require("form-data");
 const fs = require("fs");
 
-const API_BASE_URL = "https://495b-14-195-142-82.ngrok-free.app";
+const API_BASE_URL = "https://6ad1-14-195-142-82.ngrok-free.app";
 
 async function apiRequest(method, endpoint, data = null) {
   console.log("apiRequest", method, endpoint, data);

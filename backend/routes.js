@@ -44,7 +44,7 @@ router.get("/buckets", async (req, res) => {
   }
 });
 
-//Get files from bucket
+//Get all files from bucket
 router.get("/buckets/:bucketName", async (req, res) => {
   try {
     const { bucketName } = req.params;
