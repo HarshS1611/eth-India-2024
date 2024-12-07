@@ -1,5 +1,23 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
+'use client';
+import {  AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+    Address,
+    Avatar,
+    EthBalance,
+    Identity,
+    Name,
+  } from '@coinbase/onchainkit/identity';
+  import {
+    ConnectWallet,
+    Wallet,
+    WalletDropdown,
+    WalletDropdownBasename,
+    WalletDropdownDisconnect,
+    WalletDropdownFundLink,
+    WalletDropdownLink,
+  } from '@coinbase/onchainkit/wallet';
+  
+  import { color } from "@coinbase/onchainkit/theme";
 
 export default function Navbar() {
     return (
@@ -7,10 +25,24 @@ export default function Navbar() {
             <a className="font-serif mx-4 font-bold text-2xl" href="/">
                 FIT CHAIN
             </a>
-            <Avatar className="mx-4 ">
+            <Wallet>
+        <ConnectWallet className={color.inverse}>
+          <Avatar className="h-6 w-6" />
+          <Name />
+        </ConnectWallet>
+        <WalletDropdown>
+          <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
+            <Avatar />
+            <Name address="0xB14a7659486Af4ad46c598b404c259E895Da41e2"/>
+            <Address address="0xB14a7659486Af4ad46c598b404c259E895Da41e2" className={color.foregroundMuted} />
+          </Identity>
+          <WalletDropdownDisconnect />
+        </WalletDropdown>
+      </Wallet>
+            {/* <Avatar className="mx-4 ">
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+            </Avatar> */}
 
         </div>
     )

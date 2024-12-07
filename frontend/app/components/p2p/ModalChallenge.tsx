@@ -1,17 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import FitnessImage from "./images/fit.jpg";
 import TravelImage from "./assets/travel.webp";
 import ArtImage from "./assets/art.jpg";
 import AdvImage from "./assets/adventure.jpg";
 import GameImg from "./assets/gaming.jpg";
 import LifeImage from "./assets/lifestyle.webp";
-
+import {
+  Transaction,
+  TransactionButton,
+  TransactionSponsor,
+  TransactionStatus,
+  TransactionStatusAction,
+  TransactionStatusLabel,
+} from "@coinbase/onchainkit/transaction";
 import axios from "axios";
-
+import {BASE_SEPOLIA_CHAIN_ID, escrowCalls} from "./../../../blockchain/main"
 interface ModalChallengeProps {
   open: boolean;
   handleClose: () => void;
 }
+// @ts-ignore
 
 const ModalChallenge: React.FC<ModalChallengeProps> = ({ open, handleClose }) => {
   const [page, setPage] = useState(1);
@@ -60,12 +68,20 @@ const ModalChallenge: React.FC<ModalChallengeProps> = ({ open, handleClose }) =>
     }
   };
 
-
+  const handleOnStatus = useCallback((status: any) => {
+    console.log("LifecycleStatus", status);
+    if(status.statusName == "success")
+      {
+        handleFormSubmit()
+      }
+  }, []);
   const handleFormSubmit = async () => {
+    console.log("backend inytegration")
     console.log(formData);
   }
   if (!open) return null;
 
+// @ts-ignore
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm text-black">
@@ -268,13 +284,27 @@ const ModalChallenge: React.FC<ModalChallengeProps> = ({ open, handleClose }) =>
                 { " 0x123...456"}
               </p>
             </div>
-
-            <button
+            {/* @ts-ignore */}
+<Transaction
+  chainId={BASE_SEPOLIA_CHAIN_ID}
+  calls={escrowCalls.createP2PChallenge(formData.wagerAmount)}
+  onStatus={handleOnStatus}
+  className="bg-blue-700 text-white"
+>
+  <TransactionButton />
+  <TransactionSponsor />
+  <TransactionStatus>
+    <TransactionStatusLabel />
+    <TransactionStatusAction />
+  </TransactionStatus>
+</Transaction>
+            
+            {/* <button
               onClick={handleFormSubmit}
               className="bg-blue-500 text-white px-4 py-2 rounded-lg w-full mb-2"
             >
               Submit
-            </button>
+            </button> */}
           </>
         )}
 

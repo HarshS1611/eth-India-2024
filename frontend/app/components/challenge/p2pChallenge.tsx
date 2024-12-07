@@ -1,12 +1,34 @@
-import { useState } from "react";
+"use client"
+import { useState, useCallback } from "react";
+import {
+  Transaction,
+  TransactionButton,
+  TransactionSponsor,
+  TransactionStatus,
+  TransactionStatusAction,
+  TransactionStatusLabel,
+} from "@coinbase/onchainkit/transaction";
+import axios from "axios";
+import {BASE_SEPOLIA_CHAIN_ID, escrowCalls} from "./../../../blockchain/main"
 
 const P2PChallenge = (challengeDetails: any) => {
-  console.log("Challenge Details:", challengeDetails);
+  console.log("Challenge Details: from where contract is called", challengeDetails);
+  console.log("Challenge Details: from where contract is called", challengeDetails.challengeDetails.id);
+
   const [hasJoined, setHasJoined] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [activityIds, setActivityIds] = useState({});
   const [distances, setDistances] = useState({ activity1: 0, activity2: 0 });
   const [pollInterval, setPollInterval] = useState(null);
+  const handleOnStatus = useCallback((status:any) => {
+    console.log("LifecycleStatus", status);
+    // handleJoinChallenge()
+    if(status.statusName == "success")
+    {
+          handleJoinChallenge()
+    }
+     console.log("i have joinde")
+  }, []);
 
   const handleJoinChallenge = async () => {
     console.log("Joining challenge...");
@@ -75,12 +97,25 @@ const P2PChallenge = (challengeDetails: any) => {
       )}
 
       {!hasJoined ? (
-        <button
-          onClick={handleJoinChallenge}
-          className="bg-white text-black rounded-full p-3 text-lg"
-        >
-          Start Now
-        </button>
+         <Transaction
+         chainId={BASE_SEPOLIA_CHAIN_ID}
+         calls={challengeDetails.challengeDetails.id ? escrowCalls.joinP2PChallenge(challengeDetails.challengeDetails.id, "0.0001") : {}}
+         onStatus={handleOnStatus}
+         className="bg-blue-700 text-white"
+       >
+         <TransactionButton />
+         <TransactionSponsor />
+         <TransactionStatus>
+           <TransactionStatusLabel />
+           <TransactionStatusAction />
+         </TransactionStatus>
+       </Transaction>
+        // <button
+        //   onClick={handleJoinChallenge}
+        //   className="bg-white text-black rounded-full p-3 text-lg"
+        // >
+        //   Start Now
+        // </button>
       ) : (
         <button
           onClick={handleStop}
