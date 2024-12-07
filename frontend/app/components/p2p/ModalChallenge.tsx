@@ -14,11 +14,8 @@ interface ModalChallengeProps {
 }
 
 const ModalChallenge: React.FC<ModalChallengeProps> = ({ open, handleClose }) => {
-  const authToken = localStorage.getItem("authToken"); 
   const [page, setPage] = useState(1);
-  const [wallets, setWallets] = useState(null);
-  const [error, setError] = useState(null);
-  const [activeSection, setActiveSection] = useState(null);
+
   const [selectedCategory, setSelectedCategory] = useState("");
   const [formData, setFormData] = useState({
     category: "",
