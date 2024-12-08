@@ -24,19 +24,18 @@ module.exports = {
     baseSepolia: {
       url: "https://base-sepolia.g.alchemy.com/v2/grz0ZmJGLvmh--ZEfeBdhgK2SEEigRg_",
       accounts: [deployerPrivateKey],
-    }
+    },
+    polygon: {
+      url: `https://polygon-mainnet.g.alchemy.com/v2/grz0ZmJGLvmh--ZEfeBdhgK2SEEigRg_`,
+      accounts: [deployerPrivateKey],
+    },
+
   },
 
   etherscan: {
-    apiKey: {
-      baseSepolia: `${etherscanApiKey}`,
-    }
+    apiKey: `${etherscanApiKey}`,
   },
-  verify: {
-    etherscan: {
-      apiKey: `${etherscanApiKey}`,
-    },
-  },
+  
   sourcify: {
     enabled: false,
   },
