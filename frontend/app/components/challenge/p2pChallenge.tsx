@@ -26,6 +26,7 @@ const P2PChallenge = (challengeDetails: any) => {
   const [activityIds, setActivityIds] = useState({});
   const [distances, setDistances] = useState({ activity1: 0, activity2: 0 });
   const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
+  const [athleteWins, setAthleteWins] = useState(false)
   const handleOnStatus = useCallback((status: any) => {
     console.log("LifecycleStatus", status);
     // handleJoinChallenge()
@@ -123,52 +124,22 @@ const P2PChallenge = (challengeDetails: any) => {
           console.log("Updated Activity 2:", activity2Update);
 
           if (activity1Update.endDistance >= 30) {
-            <Transaction
-          chainId={BASE_SEPOLIA_CHAIN_ID}
-          calls={
-            challengeDetails.challengeDetails.id
-              ? escrowCalls.resolveP2PChallenge(
-                  challengeDetails.challengeDetails.id,
-                )
-              : {}
-          }
-          onStatus={handleOnStatus2}
-          className="bg-blue-700 text-white"
-        >
-          <TransactionButton text="claim"/>
-          <TransactionSponsor />
-          <TransactionStatus>
-            <TransactionStatusLabel />
-            <TransactionStatusAction />
-          </TransactionStatus>
-        </Transaction>
+            {            console.log("resolving challenege")
+            }
+
             console.log("Athlete 1 Wins!");
             clearInterval(pollIntervalId); // Stop polling
             setPollInterval(null); // Clear polling state
+            setAthleteWins(true)
             alert("Athlete 1 Wins!"); // Alert when Athlete 1 wins
           } else if (activity2Update.endDistance >= 30) {
-            <Transaction
-          chainId={BASE_SEPOLIA_CHAIN_ID}
-          calls={
-            challengeDetails.challengeDetails.id
-              ? escrowCalls.resolveP2PChallenge(
-                  challengeDetails.challengeDetails.id,
-                )
-              : {}
-          }
-          onStatus={handleOnStatus2}
-          className="bg-blue-700 text-white"
-        >
-          <TransactionButton text="claim"/>
-          <TransactionSponsor />
-          <TransactionStatus>
-            <TransactionStatusLabel />
-            <TransactionStatusAction />
-          </TransactionStatus>
-        </Transaction>
+            {            console.log("resolving challenege")
+            }
+           
             console.log("Athlete 2 Wins!");
             clearInterval(pollIntervalId); // Stop polling
             setPollInterval(null); // Clear polling state
+            setAthleteWins(true)
             alert("Athlete 2 Wins!"); // Alert when Athlete 2 wins
           }
         })
@@ -240,46 +211,62 @@ const P2PChallenge = (challengeDetails: any) => {
         </div>
       )}
 
-      {!hasJoined ? (
-        <Transaction
-          chainId={BASE_SEPOLIA_CHAIN_ID}
-          calls={
-            challengeDetails.challengeDetails.id
-              ? escrowCalls.joinP2PChallenge(
-                  challengeDetails.challengeDetails.id,
-                  "0.0001"
-                )
-              : {}
-          }
-          onStatus={handleOnStatus}
-          className="bg-blue-700 text-white"
-        >
-          <TransactionButton />
-          <TransactionSponsor />
-          <TransactionStatus>
-            <TransactionStatusLabel />
-            <TransactionStatusAction />
-          </TransactionStatus>
-        </Transaction>
-      ) : (
-        // <button
-        //   onClick={handleJoinChallenge}
-        //   className="bg-white text-black rounded-full p-3 text-lg"
-        // >
-        //   Start Now
-        // </button>
-        <button
-          onClick={handleStop}
-          className={`flex-1 rounded-full p-3 w-full text-lg ${
-            !isActive
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-red-500 hover:bg-red-600"
-          }`}
-          disabled={!isActive}
-        >
-          Give up !
-        </button>
-      )}
+{!hasJoined ? (
+  <Transaction
+    chainId={BASE_SEPOLIA_CHAIN_ID}
+    calls={
+      challengeDetails.challengeDetails.id
+        ? escrowCalls.joinP2PChallenge(
+            challengeDetails.challengeDetails.id,
+            "0.0001"
+          )
+        : {}
+    }
+    onStatus={handleOnStatus}
+    className="bg-blue-700 text-white"
+  >
+    <TransactionButton />
+    <TransactionSponsor />
+    <TransactionStatus>
+      <TransactionStatusLabel />
+      <TransactionStatusAction />
+    </TransactionStatus>
+  </Transaction>
+) : (
+  athleteWins ? (
+    <Transaction
+      chainId={BASE_SEPOLIA_CHAIN_ID}
+      calls={
+        challengeDetails.challengeDetails.id
+          ? escrowCalls.resolveP2PChallenge(
+              challengeDetails.challengeDetails.id,
+            )
+          : {}
+      }
+      onStatus={handleOnStatus2}
+      className="bg-blue-700 text-white"
+    >
+      <TransactionButton text="claim" />
+      <TransactionSponsor />
+      <TransactionStatus>
+        <TransactionStatusLabel />
+        <TransactionStatusAction />
+      </TransactionStatus>
+    </Transaction>
+  ) : (
+    <button
+      onClick={handleStop}
+      className={`flex-1 rounded-full p-3 w-full text-lg ${
+        !isActive
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-red-500 hover:bg-red-600"
+      }`}
+      disabled={!isActive}
+    >
+      Give up!
+    </button>
+  )
+)}
     </div>
   );
 };

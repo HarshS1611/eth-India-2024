@@ -238,14 +238,7 @@ const ModalChallenge: React.FC<ModalChallengeProps> = ({
               </div>
             </div>
 
-            <div className="mb-4">
-              <label className="block text-sm font-medium">
-                Connected Wallet
-              </label>
-              <p className="border border-gray-300 rounded-lg p-2">
-                {" 0x123...456"}
-              </p>
-            </div>
+            
 
             <Transaction
               chainId={BASE_SEPOLIA_CHAIN_ID}
