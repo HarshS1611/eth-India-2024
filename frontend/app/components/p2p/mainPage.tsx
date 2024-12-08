@@ -25,13 +25,26 @@ const MainPage = () => {
 
   const getAllChallenges = async () => {
     try {
-      const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/getallchallenges`
+      // First check the bucket
+      const newBucket = "newbucket";
+      console.log(`${process.env.NEXT_PUBLIC_API_URL}/buckets/${newBucket}`);
+      const bucketResponse = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/buckets/${newBucket}`
       );
-      setChallenges(res.data);
+
+      // If bucket check is successful, proceed to get challenges
+      console.log("Bucket Response:", bucketResponse);
+      if (bucketResponse.data.success === true) {
+        const challengesResponse = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/getallchallenges`
+        );
+        setChallenges(challengesResponse.data);
+      }
+
       setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.log("Error:");
+      setLoading(false);
     }
   };
 
