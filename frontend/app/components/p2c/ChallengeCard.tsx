@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function ChallengeCard({ challenge }: { challenge: any }) {
-    console.log("Challenge:", challenge);
+    // console.log("Challenge:", challenge);
   return (
     <div className="my-2">
       <div
