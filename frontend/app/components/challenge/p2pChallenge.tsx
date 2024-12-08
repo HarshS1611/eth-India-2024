@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState, useCallback } from "react";
 import {
   Transaction,
@@ -9,31 +9,135 @@ import {
   TransactionStatusLabel,
 } from "@coinbase/onchainkit/transaction";
 import axios from "axios";
-import {BASE_SEPOLIA_CHAIN_ID, escrowCalls} from "./../../../blockchain/main"
+import { BASE_SEPOLIA_CHAIN_ID, escrowCalls } from "./../../../blockchain/main";
 
 const P2PChallenge = (challengeDetails: any) => {
-  console.log("Challenge Details: from where contract is called", challengeDetails);
-  console.log("Challenge Details: from where contract is called", challengeDetails.challengeDetails.id);
+  console.log(
+    "Challenge Details: from where contract is called",
+    challengeDetails
+  );
+  console.log(
+    "Challenge Details: from where contract is called",
+    challengeDetails.challengeDetails.id
+  );
 
   const [hasJoined, setHasJoined] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [activityIds, setActivityIds] = useState({});
   const [distances, setDistances] = useState({ activity1: 0, activity2: 0 });
-  const [pollInterval, setPollInterval] = useState(null);
-  const handleOnStatus = useCallback((status:any) => {
+  const [pollInterval, setPollInterval] = useState<NodeJS.Timeout | null>(null);
+  const handleOnStatus = useCallback((status: any) => {
     console.log("LifecycleStatus", status);
     // handleJoinChallenge()
-    if(status.statusName == "success")
-    {
-          handleJoinChallenge()
+    if (status.statusName == "success") {
+      handleJoinChallenge();
     }
-     console.log("i have joinde")
+    console.log("i have joinde");
   }, []);
 
   const handleJoinChallenge = async () => {
     console.log("Joining challenge...");
     setHasJoined(true);
     setIsActive(true);
+    const postActivity1 = fetch("http://localhost:3001/activities1", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Temp request1",
+        startTime: "2024-12-01T06:00:00Z",
+        endTime: "2024-12-01T07:00:00Z",
+        startDistance: 0,
+        endDistance: 0,
+      }),
+    }).then((response) => response.json());
+
+    const postActivity2 = fetch("http://localhost:3001/activities2", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Temp request2",
+        startTime: "2024-12-01T06:00:00Z",
+        endTime: "2024-12-01T07:00:00Z",
+        startDistance: 0,
+        endDistance: 0,
+      }),
+    }).then((response) => response.json());
+
+    Promise.all([postActivity1, postActivity2])
+      .then(([activity1Data, activity2Data]) => {
+        // console.log("Activity 1:", activity1Data);
+        // console.log("Activity 2:", activity2Data);
+        setActivityIds({
+          activity1Id: activity1Data._id,
+          activity2Id: activity2Data._id,
+        });
+        setHasJoined(true);
+        startPolling(activity1Data._id, activity2Data._id);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  const startPolling = (activity1Id: any, activity2Id: any) => {
+    const pollIntervalId = setInterval(async () => {
+      const randomNum1 = Math.floor(Math.random() * 5) + 1;
+      const randomNum2 = Math.floor(Math.random() * 5) + 1;
+
+      Promise.all([
+        fetch(`http://localhost:3001/activities1/${activity1Id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const updatedDistance = data.endDistance + randomNum1;
+            setDistances((prev) => ({ ...prev, activity1: updatedDistance }));
+            return fetch(`http://localhost:3001/activities1/${activity1Id}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ endDistance: updatedDistance }),
+            }).then((response) => response.json());
+          }),
+        fetch(`http://localhost:3001/activities2/${activity2Id}`)
+          .then((response) => response.json())
+          .then((data) => {
+            const updatedDistance = data.endDistance + randomNum2;
+            setDistances((prev) => ({ ...prev, activity2: updatedDistance }));
+            return fetch(`http://localhost:3001/activities2/${activity2Id}`, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ endDistance: updatedDistance }),
+            }).then((response) => response.json());
+          }),
+      ])
+        .then(async ([activity1Update, activity2Update]) => {
+          console.log("Updated Activity 1:", activity1Update);
+          console.log("Updated Activity 2:", activity2Update);
+
+          if (activity1Update.endDistance >= 30) {
+            console.log("Activity 1 Wins!");
+            clearInterval(pollIntervalId); // Stop polling
+            setPollInterval(null); // Clear polling state
+            alert("Athlete 1 Wins!"); // Alert when Athlete 1 wins
+          } else if (activity2Update.endDistance >= 30) {
+            console.log("Activity 2 Wins!");
+            clearInterval(pollIntervalId); // Stop polling
+            setPollInterval(null); // Clear polling state
+            alert("Athlete 2 Wins!"); // Alert when Athlete 2 wins
+          }
+        })
+        .catch((error) => {
+          console.error("Polling Error:", error);
+        });
+    }, 2000);
+
+    setPollInterval(pollIntervalId); // Store polling interval ID
   };
 
   const handleStop = async () => {
@@ -97,26 +201,33 @@ const P2PChallenge = (challengeDetails: any) => {
       )}
 
       {!hasJoined ? (
-         <Transaction
-         chainId={BASE_SEPOLIA_CHAIN_ID}
-         calls={challengeDetails.challengeDetails.id ? escrowCalls.joinP2PChallenge(challengeDetails.challengeDetails.id, "0.0001") : {}}
-         onStatus={handleOnStatus}
-         className="bg-blue-700 text-white"
-       >
-         <TransactionButton />
-         <TransactionSponsor />
-         <TransactionStatus>
-           <TransactionStatusLabel />
-           <TransactionStatusAction />
-         </TransactionStatus>
-       </Transaction>
+        <Transaction
+          chainId={BASE_SEPOLIA_CHAIN_ID}
+          calls={
+            challengeDetails.challengeDetails.id
+              ? escrowCalls.joinP2PChallenge(
+                  challengeDetails.challengeDetails.id,
+                  "0.0001"
+                )
+              : {}
+          }
+          onStatus={handleOnStatus}
+          className="bg-blue-700 text-white"
+        >
+          <TransactionButton />
+          <TransactionSponsor />
+          <TransactionStatus>
+            <TransactionStatusLabel />
+            <TransactionStatusAction />
+          </TransactionStatus>
+        </Transaction>
+      ) : (
         // <button
         //   onClick={handleJoinChallenge}
         //   className="bg-white text-black rounded-full p-3 text-lg"
         // >
         //   Start Now
         // </button>
-      ) : (
         <button
           onClick={handleStop}
           className={`flex-1 rounded-full p-3 w-full text-lg ${

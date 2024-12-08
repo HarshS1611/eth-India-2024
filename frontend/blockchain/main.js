@@ -3,562 +3,564 @@ import axios from "axios";
 import { ethers } from "ethers";
 import { createCoinbaseWalletSDK } from "@coinbase/wallet-sdk";
 
-const web3 = new Web3("https://base-sepolia.g.alchemy.com/v2/0R7oh787gYhsgAD3G3GZaVIxSXslMvui");
+const web3 = new Web3(
+  "https://base-sepolia.g.alchemy.com/v2/0R7oh787gYhsgAD3G3GZaVIxSXslMvui"
+);
 
 export const BASE_SEPOLIA_CHAIN_ID = 84532;
 
 const escrowAbi = [
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "_platformToken",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "_platformToken",
+        type: "address",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "challengeId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "challengeId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "creator",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "stake",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "uint256",
+        name: "stake",
+        type: "uint256",
+      },
     ],
-    "name": "ChallengeCreated",
-    "type": "event"
+    name: "ChallengeCreated",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      }
+        indexed: false,
+        internalType: "address",
+        name: "creator",
+        type: "address",
+      },
     ],
-    "name": "ChallengeInitiated",
-    "type": "event"
+    name: "ChallengeInitiated",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "challengeId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "challengeId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "participant",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "participant",
+        type: "address",
+      },
     ],
-    "name": "ChallengeJoined",
-    "type": "event"
+    name: "ChallengeJoined",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "challengeId",
-        "type": "uint256"
+        indexed: true,
+        internalType: "uint256",
+        name: "challengeId",
+        type: "uint256",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "winner",
-        "type": "address"
-      }
+        indexed: true,
+        internalType: "address",
+        name: "winner",
+        type: "address",
+      },
     ],
-    "name": "ChallengeResolved",
-    "type": "event"
+    name: "ChallengeResolved",
+    type: "event",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "name": "challenges",
-    "outputs": [
+    name: "challenges",
+    outputs: [
       {
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
+        internalType: "address",
+        name: "creator",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "participant",
-        "type": "address"
+        internalType: "address",
+        name: "participant",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "stake",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "stake",
+        type: "uint256",
       },
       {
-        "internalType": "bool",
-        "name": "completed",
-        "type": "bool"
+        internalType: "bool",
+        name: "completed",
+        type: "bool",
       },
       {
-        "internalType": "address",
-        "name": "winner",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "winner",
+        type: "address",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "createP2CChallenge",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    inputs: [],
+    name: "createP2CChallenge",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "createP2PChallenge",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
+    inputs: [],
+    name: "createP2PChallenge",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "_challengeId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "_challengeId",
+        type: "uint256",
+      },
     ],
-    "name": "joinP2PChallenge",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
+    name: "joinP2PChallenge",
+    outputs: [],
+    stateMutability: "payable",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "nextChallengeId",
-    "outputs": [
+    inputs: [],
+    name: "nextChallengeId",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "platformToken",
-    "outputs": [
+    inputs: [],
+    name: "platformToken",
+    outputs: [
       {
-        "internalType": "contract IERC20",
-        "name": "",
-        "type": "address"
-      }
+        internalType: "contract IERC20",
+        name: "",
+        type: "address",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "_challengeId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "_challengeId",
+        type: "uint256",
+      },
     ],
-    "name": "resolveP2CChallenge",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    name: "resolveP2CChallenge",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "uint256",
-        "name": "_challengeId",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "_challengeId",
+        type: "uint256",
+      },
     ],
-    "name": "resolveP2PChallenge",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
+    name: "resolveP2PChallenge",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
 ];
 
-const erc20Abi =  [
+const erc20Abi = [
   {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
+    inputs: [],
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
+        internalType: "address",
+        name: "spender",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "allowance",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "allowance",
+        type: "uint256",
       },
       {
-        "internalType": "uint256",
-        "name": "needed",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "needed",
+        type: "uint256",
+      },
     ],
-    "name": "ERC20InsufficientAllowance",
-    "type": "error"
+    name: "ERC20InsufficientAllowance",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
+        internalType: "address",
+        name: "sender",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "balance",
-        "type": "uint256"
+        internalType: "uint256",
+        name: "balance",
+        type: "uint256",
       },
       {
-        "internalType": "uint256",
-        "name": "needed",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "needed",
+        type: "uint256",
+      },
     ],
-    "name": "ERC20InsufficientBalance",
-    "type": "error"
+    name: "ERC20InsufficientBalance",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "approver",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "approver",
+        type: "address",
+      },
     ],
-    "name": "ERC20InvalidApprover",
-    "type": "error"
+    name: "ERC20InvalidApprover",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "receiver",
+        type: "address",
+      },
     ],
-    "name": "ERC20InvalidReceiver",
-    "type": "error"
+    name: "ERC20InvalidReceiver",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "sender",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
     ],
-    "name": "ERC20InvalidSender",
-    "type": "error"
+    name: "ERC20InvalidSender",
+    type: "error",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
     ],
-    "name": "ERC20InvalidSpender",
-    "type": "error"
+    name: "ERC20InvalidSpender",
+    type: "error",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "spender",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
     ],
-    "name": "Approval",
-    "type": "event"
+    name: "Approval",
+    type: "event",
   },
   {
-    "anonymous": false,
-    "inputs": [
+    anonymous: false,
+    inputs: [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "from",
+        type: "address",
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
+        indexed: true,
+        internalType: "address",
+        name: "to",
+        type: "address",
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
+        indexed: false,
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
     ],
-    "name": "Transfer",
-    "type": "event"
+    name: "Transfer",
+    type: "event",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "spender",
+        type: "address",
+      },
     ],
-    "name": "allowance",
-    "outputs": [
+    name: "allowance",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
+        internalType: "address",
+        name: "spender",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
     ],
-    "name": "approve",
-    "outputs": [
+    name: "approve",
+    outputs: [
       {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "spender",
-        "type": "address"
+        internalType: "address",
+        name: "spender",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
     ],
-    "name": "approveCustom",
-    "outputs": [
+    name: "approveCustom",
+    outputs: [
       {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
     ],
-    "name": "balanceOf",
-    "outputs": [
+    name: "balanceOf",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "decimals",
-    "outputs": [
+    inputs: [],
+    name: "decimals",
+    outputs: [
       {
-        "internalType": "uint8",
-        "name": "",
-        "type": "uint8"
-      }
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "name",
-    "outputs": [
+    inputs: [],
+    name: "name",
+    outputs: [
       {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "symbol",
-    "outputs": [
+    inputs: [],
+    name: "symbol",
+    outputs: [
       {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [],
-    "name": "totalSupply",
-    "outputs": [
+    inputs: [],
+    name: "totalSupply",
+    outputs: [
       {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
     ],
-    "stateMutability": "view",
-    "type": "function"
+    stateMutability: "view",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
+        internalType: "address",
+        name: "to",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
     ],
-    "name": "transfer",
-    "outputs": [
+    name: "transfer",
+    outputs: [
       {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    "inputs": [
+    inputs: [
       {
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
+        internalType: "address",
+        name: "from",
+        type: "address",
       },
       {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
+        internalType: "address",
+        name: "to",
+        type: "address",
       },
       {
-        "internalType": "uint256",
-        "name": "value",
-        "type": "uint256"
-      }
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
     ],
-    "name": "transferFrom",
-    "outputs": [
+    name: "transferFrom",
+    outputs: [
       {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
     ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-]
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];
 
 const escrowContractAddress = `0x4a01034a408d7801b693156e3d87bc3ae7403d21`;
 const escrow = new web3.eth.Contract(escrowAbi, escrowContractAddress);
@@ -566,32 +568,32 @@ const escrow = new web3.eth.Contract(escrowAbi, escrowContractAddress);
 const erc20Address = "0x6E368210Fb3B01D0084Fa93e4e11E062c4bbFebf";
 const xfit = new web3.eth.Contract(erc20Abi, erc20Address);
 
-const escrowContract = new ethers.Contract(escrowContractAddress, escrowAbi,  ethers.JsonRpcProvider);
-const erc20Contract = new ethers.Contract(erc20Address, erc20Abi,  ethers.JsonRpcProvider);
-
+const escrowContract = new ethers.Contract(
+  escrowContractAddress,
+  escrowAbi,
+  ethers.JsonRpcProvider
+);
+const erc20Contract = new ethers.Contract(
+  erc20Address,
+  erc20Abi,
+  ethers.JsonRpcProvider
+);
 
 export const escrowCalls = {
-  createP2CChallenge: () => [
-    generateCreateP2CChallengeTx()
-  ],
-  createP2PChallenge: (value) => [
-    generateCreateP2PChallengeTx(value)
-  ],
+  createP2CChallenge: () => [generateCreateP2CChallengeTx()],
+  createP2PChallenge: (value) => [generateCreateP2PChallengeTx(value)],
   joinP2PChallenge: (challengeId, stake) => [
-    generateJoinP2PChallengeTx(challengeId, stake)
+    generateJoinP2PChallengeTx(challengeId, stake),
   ],
-  resolveP2PChallenge: (id) => [
-    generateResolveP2PChallenge(id)
-  ],
-  resolveP2CChallenge: (id) => [
-    generateResolveP2CChallengeTx(id)
-  ]
+  resolveP2PChallenge: (id) => [generateResolveP2PChallenge(id)],
+  resolveP2CChallenge: (id) => [generateResolveP2CChallengeTx(id)],
 };
-
 
 async function createP2PChallenge(stake) {
   try {
-    const tx = await escrowContract.createP2PChallenge({ value: ethers.parseEther(stake) });
+    const tx = await escrowContract.createP2PChallenge({
+      value: ethers.parseEther(stake),
+    });
     console.log("Transaction sent:", tx.hash);
     await tx.wait();
     console.log("Challenge created successfully!");
@@ -602,7 +604,9 @@ async function createP2PChallenge(stake) {
 
 async function joinP2PChallenge(challengeId, stake) {
   try {
-    const tx = await escrowContract.joinP2PChallenge(challengeId, { value: ethers.parseEther(stake) });
+    const tx = await escrowContract.joinP2PChallenge(challengeId, {
+      value: ethers.parseEther(stake),
+    });
     console.log("Transaction sent:", tx.hash);
     await tx.wait();
     console.log("Joined challenge successfully!");
@@ -664,7 +668,6 @@ async function createP2CChallenge() {
 //   }
 // }
 
-
 // old
 
 export const generateCreateP2PChallengeTx = (value) => {
@@ -677,7 +680,7 @@ export const generateCreateP2PChallengeTx = (value) => {
 };
 
 export const generateJoinP2PChallengeTx = (challengeId, stake) => {
-  console.log("nepal join p2p", challengeId, stake)
+  console.log("nepal join p2p", challengeId, stake);
   const data = escrow.methods.joinP2PChallenge(challengeId).encodeABI();
   return {
     to: escrowContractAddress,
@@ -687,13 +690,13 @@ export const generateJoinP2PChallengeTx = (challengeId, stake) => {
 };
 
 export const generateResolveP2PChallenge = (Id) => {
-  const id = Number(Id)
+  const id = Number(Id);
   const data = escrow.methods.resolveP2PChallenge(id).encodeABI();
   return {
     to: escrowContractAddress,
     data: data,
   };
-}
+};
 
 export const generateNextChallengeId = async () => {
   try {
@@ -705,7 +708,7 @@ export const generateNextChallengeId = async () => {
     console.error("Failed to get next challenge ID:", error);
     throw error;
   }
-}
+};
 export const generateCreateP2CChallengeTx = () => {
   const data = escrow.methods.createP2CChallenge().encodeABI();
   return {
@@ -753,11 +756,7 @@ export const generateResolveP2CChallengeTx = (challengeId) => {
 //   }
 // };
 
-export {
-  createP2PChallenge,
-  joinP2PChallenge,
-  createP2CChallenge,
-};
+export { createP2PChallenge, joinP2PChallenge, createP2CChallenge };
 
 // // Example usage
 // const fromAddress = "0xYourAddress";
@@ -770,4 +769,3 @@ export {
 //   challengeId,
 //   stake
 // );
-
