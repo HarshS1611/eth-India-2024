@@ -50,9 +50,9 @@ const challengeSchema = new mongoose.Schema({
 const p2cSchema = new mongoose.Schema({
   category: { type: String, required: true },
   challengeName: { type: String, required: true },
-  target: { type: Number, required: true },
-  targetType: { type: String, required: true }, // e.g., "steps", "distance", "time"
-  id: { type: String, required: true, unique: true },
+  target: { type: Number, required: false },
+  targetType: { type: String, required: false }, // e.g., "steps", "distance", "time"
+  id: { type: String, required: false, unique: true },
   amount: { type: Number, required: true },
 });
 
@@ -60,53 +60,43 @@ const Challenge = mongoose.model("Challenge", challengeSchema);
 const P2C = mongoose.model("P2C", p2cSchema);
 
 // API to Create a P2C Challenge
-// app.post("/p2c", async (req, res) => {
-//   try {
-//     const { category, challengeName, target, targetType, id, amount } =
-//       req.body;
-//     if (
-//       !category ||
-//       !challengeName ||
-//       !target ||
-//       !targetType ||
-//       !id ||
-//       !amount
-//     ) {
-//       return res.status(400).json({ message: "All fields are required" });
-//     }
+app.post("/p2c", async (req, res) => {
+  try {
+    const { category, challengeName, id, amount } = req.body;
+    if (!category || !challengeName || !amount) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
 
-//     // Create and save the new challenge
-//     const newChallenge = new P2C({
-//       category,
-//       challengeName,
-//       target,
-//       targetType,
-//       id,
-//       amount,
-//     });
+    // Create and save the new challenge
+    const newChallenge = new P2C({
+      category,
+      challengeName,
+      amount,
+      id,
+    });
 
-//     const savedChallenge = await newChallenge.save();
-//     console.log(savedChallenge);
-//     res.status(201).json(savedChallenge);
-//   } catch (error) {
-//     // Handle unique constraint errors
-//     if (error.code === 11000) {
-//       return res.status(409).json({ message: "Challenge ID must be unique" });
-//     }
+    const savedChallenge = await newChallenge.save();
+    console.log(savedChallenge);
+    res.status(201).json(savedChallenge);
+  } catch (error) {
+    // Handle unique constraint errors
+    if (error.code === 11000) {
+      return res.status(409).json({ message: "Challenge ID must be unique" });
+    }
 
-//     res.status(500).json({ message: "Error creating challenge", error });
-//   }
-// });
+    res.status(500).json({ message: "Error creating challenge", error });
+  }
+});
 
 // API to Fetch All P2C Challenges
-// app.get("/p2cchallenges", async (req, res) => {
-//   try {
-//     const challenges = await P2C.find(); // Fetch all challenges
-//     res.status(200).json(challenges);
-//   } catch (error) {
-//     res.status(500).json({ message: "Error fetching challenges", error });
-//   }
-// });
+app.get("/p2cchallenges", async (req, res) => {
+  try {
+    const challenges = await P2C.find(); // Fetch all challenges
+    res.status(200).json(challenges);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching challenges", error });
+  }
+});
 
 // API to Create an Activity for athlete 1
 app.post("/activities1", async (req, res) => {
