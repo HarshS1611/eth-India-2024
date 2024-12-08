@@ -95,6 +95,7 @@ router.get("/challenge/:id", async (req, res) => {
       const filePath = path.join(dir, file);
       const data = fs.readFileSync(filePath);
       const jsonData = JSON.parse(data);
+      console.log(jsonData.id, req.params.id);
       if (jsonData.id === req.params.id) {
         fileData = jsonData;
       }

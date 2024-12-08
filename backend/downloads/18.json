@@ -1,0 +1,9 @@
+{
+  "category": "Fitness",
+  "challengeName": "run challenge",
+  "target": "10000",
+  "targetType": "meters",
+  "challengeType": "multiplayer",
+  "id": 18,
+  "amount": "0.00001"
+}

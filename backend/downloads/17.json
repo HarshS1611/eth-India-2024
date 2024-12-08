@@ -1,0 +1,9 @@
+{
+  "category": "Fitness",
+  "challengeName": "test challenge 01",
+  "target": "1000",
+  "targetType": "meters",
+  "challengeType": "multiplayer",
+  "id": 17,
+  "amount": "0.00001"
+}
