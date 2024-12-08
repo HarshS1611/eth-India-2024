@@ -74,7 +74,7 @@ const ModalChallenge: React.FC<ModalChallengeProps> = ({
         amount,
       };
 
-      console.log("Challenge data is ", challengeData);
+      // console.log("Challenge data is ", challengeData);
       const res = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/addchallenge`,
         challengeData

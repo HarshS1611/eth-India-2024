@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 export default function ChallengeCard({ challenge }: { challenge: any }) {
-  console.log("Challenge from card:", challenge);
+  // console.log("Challenge from card:", challenge);
 
   return (
     <div className="my-2">

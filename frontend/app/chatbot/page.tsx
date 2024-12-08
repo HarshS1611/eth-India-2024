@@ -21,7 +21,7 @@ export default function Chatbot() {
     console.log("LifecycleStatus", status);
     if(status.statusName == "success")
       {
-        console.log("put on chain")
+        console.log("putting on chain")
       }
   }, []);
   const handleSubmit = async (e: React.FormEvent) => {
