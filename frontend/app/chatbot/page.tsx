@@ -1,13 +1,29 @@
 // File: /pages/chatbot.tsx
 "use client";
-import { useState } from 'react';
+import { useState, useCallback} from 'react';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
+import {
+  Transaction,
+  TransactionButton,
+  TransactionSponsor,
+  TransactionStatus,
+  TransactionStatusAction,
+  TransactionStatusLabel,
+} from "@coinbase/onchainkit/transaction";
+import axios from "axios";
+import {BASE_SEPOLIA_CHAIN_ID, escrowCalls} from "./../../blockchain/main"
 
 export default function Chatbot() {
   const [userInput, setUserInput] = useState('');
   const [responses, setResponses] = useState<string[]>([]);
-
+ const handleOnStatus = useCallback((status: any) => {
+    console.log("LifecycleStatus", status);
+    if(status.statusName == "success")
+      {
+        console.log("put on chain")
+      }
+  }, []);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -20,6 +36,7 @@ export default function Chatbot() {
       });
 
       const data = await res.json();
+      console.log(responses.length)
 
       if (res.ok) {
         const agentMessages = data[0]?.agent?.messages || [];
@@ -46,6 +63,18 @@ export default function Chatbot() {
                 {response}
               </div>
             ))}
+            {responses.length === 2 && (
+  <Transaction
+    chainId={BASE_SEPOLIA_CHAIN_ID}
+    calls={escrowCalls.createP2CChallenge()}
+    onStatus={handleOnStatus}
+    className="bg-blue-700 text-white"
+  >
+    <TransactionButton text="challenge AI !"/>
+    <TransactionSponsor />
+  
+  </Transaction>
+)}
           </div>
           <div className="flex p-4 bg-gray-800">
             <input
