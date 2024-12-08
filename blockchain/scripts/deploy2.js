@@ -5,7 +5,7 @@ async function main() {
   await hre.run("compile");
 
   // Specify the PlatformToken address (replace with the actual deployed address)
-  const platformTokenAddress = "0x94E41D4EFB03D483aB2E1D9addA86DccEd36338B";
+  const platformTokenAddress = "0x692B876987b4D62F65bc57366287B2c4e9657a2F";
 
   // Deploy the Escrow contract
   const Escrow = await hre.ethers.getContractFactory("Escrow");

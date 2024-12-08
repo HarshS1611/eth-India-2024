@@ -2,6 +2,7 @@ require("@nomicfoundation/hardhat-toolbox");
 const dotenv = require("dotenv");
 dotenv.config();
 /** @type import('hardhat/config').HardhatUserConfig */
+const {  mnemonic, bscscanApiKey } = require("./api.json");
 
 const providerApiKey = process.env.ALCHEMY_API_KEY || "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
 const deployerPrivateKey =
@@ -10,7 +11,7 @@ const deployerPrivateKey =
 const etherscanApiKey = process.env.ETHERSCAN_API_KEY;
 
 module.exports = {
-  solidity: "0.8.26",
+  solidity: "0.8.20",
   networks: {
     
     polygonAmoy: {
@@ -29,11 +30,17 @@ module.exports = {
       url: `https://polygon-mainnet.g.alchemy.com/v2/grz0ZmJGLvmh--ZEfeBdhgK2SEEigRg_`,
       accounts: [deployerPrivateKey],
     },
+    bnb : {
+      url: `https://data-seed-prebsc-1-s1.bnbchain.org:8545`,
+      chainId: 97,
+      gasPrice: 20000000000,
+      accounts: {mnemonic: mnemonic}
+    },
 
   },
 
   etherscan: {
-    apiKey: `${etherscanApiKey}`,
+    apiKey: bscscanApiKey
   },
   
   sourcify: {
