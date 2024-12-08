@@ -34,7 +34,9 @@ const P2PChallenge = (challengeDetails: any) => {
     }
     console.log("i have joinde");
   }, []);
-
+  const handleOnStatus2 = useCallback((status: any) => {
+    console.log("challenege resolved", status);
+  }, []);
   const handleJoinChallenge = async () => {
     console.log("Joining challenge...");
     setHasJoined(true);
@@ -121,12 +123,50 @@ const P2PChallenge = (challengeDetails: any) => {
           console.log("Updated Activity 2:", activity2Update);
 
           if (activity1Update.endDistance >= 30) {
-            console.log("Activity 1 Wins!");
+            <Transaction
+          chainId={BASE_SEPOLIA_CHAIN_ID}
+          calls={
+            challengeDetails.challengeDetails.id
+              ? escrowCalls.resolveP2PChallenge(
+                  challengeDetails.challengeDetails.id,
+                )
+              : {}
+          }
+          onStatus={handleOnStatus2}
+          className="bg-blue-700 text-white"
+        >
+          <TransactionButton text="claim"/>
+          <TransactionSponsor />
+          <TransactionStatus>
+            <TransactionStatusLabel />
+            <TransactionStatusAction />
+          </TransactionStatus>
+        </Transaction>
+            console.log("Athlete 1 Wins!");
             clearInterval(pollIntervalId); // Stop polling
             setPollInterval(null); // Clear polling state
             alert("Athlete 1 Wins!"); // Alert when Athlete 1 wins
           } else if (activity2Update.endDistance >= 30) {
-            console.log("Activity 2 Wins!");
+            <Transaction
+          chainId={BASE_SEPOLIA_CHAIN_ID}
+          calls={
+            challengeDetails.challengeDetails.id
+              ? escrowCalls.resolveP2PChallenge(
+                  challengeDetails.challengeDetails.id,
+                )
+              : {}
+          }
+          onStatus={handleOnStatus2}
+          className="bg-blue-700 text-white"
+        >
+          <TransactionButton text="claim"/>
+          <TransactionSponsor />
+          <TransactionStatus>
+            <TransactionStatusLabel />
+            <TransactionStatusAction />
+          </TransactionStatus>
+        </Transaction>
+            console.log("Athlete 2 Wins!");
             clearInterval(pollIntervalId); // Stop polling
             setPollInterval(null); // Clear polling state
             alert("Athlete 2 Wins!"); // Alert when Athlete 2 wins
